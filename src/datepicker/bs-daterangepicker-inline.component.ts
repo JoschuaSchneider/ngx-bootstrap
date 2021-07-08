@@ -92,28 +92,7 @@ export class BsDaterangepickerInlineDirective implements OnInit, OnDestroy, OnCh
 
     ngOnInit(): void {
         this.setConfig();
-
-        // if date changes from external source (model -> view)
-        this._subs.push(
-          this.bsValueChange.subscribe((value: Date[]) => {
-            if (this._datepickerRef) {
-              this._datepickerRef.instance.value = value;
-            }
-          })
-        );
-
-        // if date changes from picker (view -> model)
-      if (this._datepickerRef) {
-        this._subs.push(
-          this._datepickerRef.instance.valueChange
-            .pipe(
-              filter((range: Date[]) => range && range[0] && !!range[1])
-            )
-            .subscribe((value: Date[]) => {
-              this.bsValue = value;
-            })
-        );
-      }
+        this.updateSubscriptions();
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -123,12 +102,10 @@ export class BsDaterangepickerInlineDirective implements OnInit, OnDestroy, OnCh
 
         if (changes.minDate) {
           this._datepickerRef.instance.minDate = this.minDate;
-          this.setConfig();
         }
 
         if (changes.maxDate) {
           this._datepickerRef.instance.maxDate = this.maxDate;
-          this.setConfig();
         }
 
         if (changes.datesEnabled) {
@@ -137,23 +114,47 @@ export class BsDaterangepickerInlineDirective implements OnInit, OnDestroy, OnCh
 
         if (changes.datesDisabled) {
           this._datepickerRef.instance.datesDisabled = this.datesDisabled;
-          this.setConfig();
         }
 
         if (changes.daysDisabled) {
           this._datepickerRef.instance.daysDisabled = this.daysDisabled;
-          this.setConfig();
         }
 
         if (changes.isDisabled) {
           this._datepickerRef.instance.isDisabled = this.isDisabled;
-          this.setConfig();
         }
 
         if (changes.dateCustomClasses) {
           this._datepickerRef.instance.dateCustomClasses = this.dateCustomClasses;
-          this.setConfig();
         }
+      
+        this.setConfig();
+    }
+  
+    updateSubscriptions(): void {
+      for (const subscripion of this._subs) {
+        subscripion.unsubscribe();
+      }
+
+      this._subs = [];
+
+      // if date changes from external source (model -> view)
+      this._subs.push(
+        this.bsValueChange.subscribe((value: Date) => {
+          if (this._datepickerRef) {
+            this._datepickerRef.instance.value = value;
+          }
+        }),
+      );
+
+      // if date changes from picker (view -> model)
+      if (this._datepickerRef) {
+        this._subs.push(
+          this._datepickerRef.instance.valueChange.subscribe((value: Date) => {
+            this.bsValue = value;
+          }),
+        );
+      }
     }
 
     /**
@@ -182,6 +183,8 @@ export class BsDaterangepickerInlineDirective implements OnInit, OnDestroy, OnCh
         .attach(BsDaterangepickerInlineContainerComponent)
         .to(this._elementRef)
         .show();
+      
+      this.updateSubscriptions();
     }
 
     ngOnDestroy() {
