@@ -120,17 +120,14 @@ export class BsDatepickerInlineDirective implements OnInit, OnDestroy, OnChanges
 
     if (changes.minDate) {
       this._datepickerRef.instance.minDate = this.minDate;
-      this.setConfig();
     }
 
     if (changes.maxDate) {
       this._datepickerRef.instance.maxDate = this.maxDate;
-      this.setConfig();
     }
 
     if (changes.datesDisabled) {
       this._datepickerRef.instance.datesDisabled = this.datesDisabled;
-      this.setConfig();
     }
 
     if (changes.datesEnabled) {
@@ -140,18 +137,17 @@ export class BsDatepickerInlineDirective implements OnInit, OnDestroy, OnChanges
 
     if (changes.isDisabled) {
       this._datepickerRef.instance.isDisabled = this.isDisabled;
-      this.setConfig();
     }
 
     if (changes.dateCustomClasses) {
       this._datepickerRef.instance.dateCustomClasses = this.dateCustomClasses;
-      this.setConfig();
     }
 
     if (changes.dateTooltipTexts) {
       this._datepickerRef.instance.dateTooltipTexts = this.dateTooltipTexts;
-      this.setConfig();
     }
+    
+    this.setConfig();
   }
   
   updateSubscriptions(): void {
